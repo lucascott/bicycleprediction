@@ -1,0 +1,25 @@
+{
+  "name": "20182601",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trentose2/20182601.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trentose2/20182601/issues"
+  },
+  "homepage": "https://github.com/trentose2/20182601#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "python-shell": "^0.5.0"
+  }
+}

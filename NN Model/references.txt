@@ -1,0 +1,2 @@
+get season from date
+https://stackoverflow.com/questions/16139306/determine-season-given-timestamp-in-python-using-datetime

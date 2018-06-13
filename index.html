@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>BicicleUp</title>
+	<link rel="stylesheet" href="./css/bootstrap.min.css">
+	<style type="text/css">
+	body {
+		animation: 10000ms ease-in-out infinite color-change;
+	}
+
+	@keyframes color-change {
+		0% {
+			background-color: #a7bed3;
+		}
+		20% {
+			background-color: #d8ffda;
+		}
+		40% {
+			background-color: #f1ffc4;
+		}
+		60% {
+			background-color: #e4ffc1;
+		}
+		80% {
+			background-color: #dab894;
+		}
+		100% {
+			background-color: #a7bed3;
+		}
+	}
+	.loader {
+		display: inline-block;
+		border: 4px solid #f3f3f3; /* Light grey */
+		border-top: 4px solid #3498db; /* Blue */
+		border-radius: 50%;
+		width: 60px;
+		height: 60px;
+		animation: spin 3s linear infinite;
+	}
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-light bg-light">
+		<a class="navbar-brand" href="#">
+			<img src="logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+			BicicleUp
+		</a>
+	</nav>
+
+	<div class="container">
+		<div class="row">
+			<main class="col-md-12 ml-sm-auto col-lg-12 px-4 text-center">
+				<h1>How many bikes will be around soon?</h1>
+				<h2>Now the weather in Washington D.C. is: <span id="weather"></span></h2>
+				<p>Temperature: <span id="temperature"></span> °C</p>
+				<p>Humidity: <span id="humidity"></span>%</p>
+				<p>Wind speed: <span id="windspeed"></span> Km/h</p>
+				<h3 style="margin-bottom: 30px">The predicted number of bikes currently in use is:</h3>
+				<div id="loader" class="loader"></div>
+				<h1><span id="prediction"></span></h1>
+			</main>
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="./js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	var json, json2;
+	
+	$.getJSON('http://api.openweathermap.org/data/2.5/weather?id=4140963&appid=93c1b1cf935896c1d5551cc0ec9ff43a', function(data) {
+		json = data
+		console.log(json)
+		$("#weather").text(json.weather[0].main);
+		$("#temperature").text((json.main.temp - 273).toFixed(1));
+		$("#humidity").text(json.main.humidity);
+		$("#windspeed").text((json.wind.speed*3.6).toFixed(1));
+		let url = "http://localhost:3000/predict?dt=" + json.dt + "&weather=" + json.weather[0].main + "&temp=" + json.main.temp + "&humidity=" + json.main.humidity + "&windspeed=" + json.wind.speed;
+		console.log(url);
+		console.log("python test.py " + json.dt + " " + json.weather[0].main + " " + json.main.temp + " " + json.main.humidity + " " + json.wind.speed)
+		$.getJSON(url, function(data) {
+			json2 = data;
+			console.log(json2.prediction);
+			$("#loader").hide();
+			$("#prediction").text(json2.prediction);
+		});
+	});
+	
+		//http://api.openweathermap.org/data/2.5/weather?id=4140963&appid=93c1b1cf935896c1d5551cc0ec9ff43a
+	</script>
+</body>
+</html>
