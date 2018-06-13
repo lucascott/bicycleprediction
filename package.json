@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/trentose2/20182601.git"
+    "url": "git+https://github.com/lucascott/bicycleprediction.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/trentose2/20182601/issues"
+    "url": "https://github.com/lucascott/bicycleprediction/issues"
   },
-  "homepage": "https://github.com/trentose2/20182601#readme",
+  "homepage": "https://github.com/lucascott/bicycleprediction/#readme",
   "dependencies": {
     "cors": "^2.8.4",
     "express": "^4.16.3",
