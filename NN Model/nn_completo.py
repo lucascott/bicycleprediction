@@ -5,11 +5,12 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.utils import shuffle
 
 from keras.models import Sequential
 from keras.models import model_from_json
-from keras.layers import Dense
-from keras.layers import LSTM
+from keras.layers import Dense, Dropout
 from keras.optimizers import RMSprop
 from tensorflow import set_random_seed
 import numpy
@@ -24,15 +25,14 @@ set_random_seed(7)
 filename = "hour.csv"
 scaler_filename = "scaler.save"
 train_percentage = 90
-epochs = 50
+epochs = 100
 
 # load dataset
 df = pd.read_csv(filename)
 
 
 df.drop(["instant","yr","atemp","dteday","casual","registered"], inplace= True, axis = 1)
-
-
+df = df.sample(frac=1).reset_index(drop=True)
 # ensure that the y colomns will be the last of the dataset
 cols_at_end = ["cnt"]
 df = df[[c for c in df if c not in cols_at_end] + [c for c in cols_at_end if c in df]]
@@ -74,10 +74,15 @@ print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
 
 # design network
 model = Sequential()
-model.add(Dense(30, input_dim=train_X.shape[1], activation = "relu"))
-model.add(Dense(300, activation = "relu"))
-model.add(Dense(120, activation = "relu"))
-model.add(Dense(60, activation = "relu"))
+model.add(Dense(64, input_dim=train_X.shape[1], activation = "relu"))
+model.add(Dense(128, activation = "relu"))
+model.add(Dense(128, activation = "relu"))
+model.add(Dense(128, activation = "relu"))
+model.add(Dense(128, activation = "relu"))
+model.add(Dense(64, activation = "relu"))
+model.add(Dense(32, activation = "relu"))
+model.add(Dense(16, activation = "relu"))
+
 #model.add(Dense(units=120, activation = "relu"))
 #model.add(Dense(units=60, activation = "relu"))
 
@@ -86,10 +91,14 @@ model.add(Dense(units=1, activation="linear"))
 opt = RMSprop()
 model.compile(loss='mean_squared_error', optimizer=opt, metrics=['accuracy'])
 # fit network
-history = model.fit(train_X, train_y, epochs=epochs, batch_size=50, validation_data=(test_X, test_y), verbose=2, shuffle=True)
+history = model.fit(train_X, train_y, epochs=epochs, batch_size=64, validation_data=(test_X, test_y), verbose=2, shuffle=True)
 # plot history
+pyplot.subplot(2,1,1)
 pyplot.plot(history.history['loss'], label='loss')
 pyplot.plot(history.history['val_loss'], label='val_loss')
+pyplot.legend()
+
+pyplot.subplot(2,1,2)
 pyplot.plot(history.history['acc'], label='accuracy')
 pyplot.legend()
 pyplot.show()
@@ -115,12 +124,16 @@ loaded_model.load_weights("model.h5")
 print("Loaded model from disk")
 # evaluate loaded model on test data
 loaded_model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['accuracy'])
-# make a prediction
+# make predictions
 yhat = loaded_model.predict(test_X)
-# calculate RMSE
+score = loaded_model.evaluate(test_X, test_y)
+# calculate RMSE and absolute error
 rmse = sqrt(mean_squared_error(yhat, test_y))
+absolute = mean_absolute_error(yhat, test_y)
 
+print("Test accuracy: %.3f" % score[1])
 print('Test RMSE: %.3f' % rmse)
+print('Test absolute error: %.3f' % absolute)
 
 pyplot.plot(yhat, label='prediction')
 pyplot.plot(test_y, label='actual')

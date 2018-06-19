@@ -22,11 +22,11 @@ scaler_filename = "scaler.save"
 
 
 Y = 2000 # dummy leap year to allow input X-02-29 (leap day)
-seasons = [(4, (date(Y,  1,  1),  date(Y,  3, 20))), # winter
-			(1, (date(Y,  3, 21),  date(Y,  6, 20))), # spring
-			(2, (date(Y,  6, 21),  date(Y,  9, 22))), # summer
-			(3, (date(Y,  9, 23),  date(Y, 12, 20))), # autumn
-			(4, (date(Y, 12, 21),  date(Y, 12, 31)))] # winter
+seasons = [(1, (date(Y,  1,  1),  date(Y,  3, 20))), # winter
+			(2, (date(Y,  3, 21),  date(Y,  6, 20))), # spring
+			(3, (date(Y,  6, 21),  date(Y,  9, 22))), # summer
+			(4, (date(Y,  9, 23),  date(Y, 12, 20))), # fall
+			(1, (date(Y, 12, 21),  date(Y, 12, 31)))] # winter
 
 def get_season(now):
 	if isinstance(now, datetime):

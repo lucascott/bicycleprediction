@@ -22,7 +22,7 @@ function predict (request, response) {
   };
   var results;
   PythonShell.run('test.py', options, function (err, res) {
-    
+    if (err) throw err;
     //res is an array consisting of messages collected during execution
     results = res[0].replace('\r','');
     console.log(res);
