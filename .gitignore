@@ -83,3 +83,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+NN Model/model.h5
+NN Model/model.json
