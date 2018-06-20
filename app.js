@@ -17,7 +17,7 @@ app.get('/', function(req, res) {
 app.post('/predict', predict);
 
 function predict (request, response) {
-  	console.log("Predict")
+  	console.log("Prediction in progress...")
   	json = request.body
   	filename = "input.csv"
   	output = "timestamp,weathersit,temp,hum,windspeed\n"
@@ -33,7 +33,7 @@ function predict (request, response) {
 			return console.log(err);
 		}
 
-		console.log("The file was saved!");
+		console.log("The input file is saved.");
 	});
 	var options = {
 		mode: 'text',
@@ -48,9 +48,11 @@ function predict (request, response) {
 			//res[i] = res[i].replace('\r','');
 			res[i] = parseInt(res[i]);
 		}
-		console.log(res);
+		//console.log(res);
 		response.json({"pred" : res});
+		console.log("Prediction created!")
   	});
+  	
 }
 
 

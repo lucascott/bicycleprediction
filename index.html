@@ -72,7 +72,7 @@
 				<h3 class="mt-5">The predicted number of bikes currently in use is:</h3>
 				<div id="loader" class="loader mt-3"></div>
 				<h1><span id="prediction"></span></h1>
-				<h3 id="chart-title" class="mt-5" style="display: none;">Predictions for the next 5 days:</h3>
+				<h3 id="chart-title" class="mt-3" style="display: none;">Predictions for the next 5 days:</h3>
 				<canvas id="line-chart" width="300" height="200"></canvas>
 			</main>
 		</div>
@@ -113,7 +113,7 @@
 				for (i in json.list){
 					labels.push([json.list[i].dt_txt,"Weather: " + json.list[i].weather[0].main])
 				}
-				console.log(labels)
+				labels[0] = "Now"
 				new Chart(document.getElementById("line-chart"), {
 				  type: 'line',
 				  data: {
