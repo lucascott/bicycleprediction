@@ -32,8 +32,7 @@ df = pd.read_csv(filename)
 
 
 df.drop(["instant","yr","atemp","dteday","casual","registered"], inplace= True, axis = 1)
-df = df.sample(frac=1).reset_index(drop=True)
-# ensure that the y colomns will be the last of the dataset
+# ensure that the y columns will be the last of the dataset
 cols_at_end = ["cnt"]
 df = df[[c for c in df if c not in cols_at_end] + [c for c in cols_at_end if c in df]]
 print(df.columns)
@@ -54,11 +53,14 @@ df.values.astype('float32')
 # normalize features
 df.interpolate(inplace=True) # rimuovo i valori NaN altrimenti non posso normalizzare
 scaler = MinMaxScaler(feature_range=(-1, 1))
-scaled = scaler.fit_transform(df.values[:,:-1])
+scaled = scaler.fit_transform(df.values[:,: -len(cols_at_end)])
 scaled = pd.DataFrame(scaled)
 scaled = pd.concat((scaled, df[cols_at_end]), axis=1)
-joblib.dump(scaler, scaler_filename)
+joblib.dump(scaler, scaler_filename) # exporting the scaler
 print(scaled.head())
+
+# shuffle the dataset
+scaled = scaled.sample(frac=1).reset_index(drop=True)
 
 # split into train and test sets
 values = scaled.values
@@ -101,7 +103,6 @@ pyplot.legend()
 pyplot.subplot(2,1,2)
 pyplot.plot(history.history['acc'], label='accuracy')
 pyplot.legend()
-pyplot.show()
 
 
 # serialize model to JSON
