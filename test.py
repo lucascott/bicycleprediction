@@ -67,32 +67,40 @@ def make_prediction(X):
 	# make a prediction
 	return loaded_model.predict(X)
 
+# timestamp , weather , temp ,humidity, windspeed
+def convert(lista):
+	timestamp = num(lista[0])
 
+	if isinstance(timestamp, int):
+		date = datetime.fromtimestamp(timestamp)
+		srt_datetime = date.strftime('%Y-%m-%d %H:%M:%S')
+		season = get_season(date)
+		month = date.strftime('%m')
+		hour = date.strftime('%H')
+		weekday = date.weekday() # 0 = monday, 6 = sunday
+		weekday = (weekday + 1) % 7 # weekday fix to 0 = sunday, 6 = saturday
+		holiday = 1 if weekday == 0 or weekday == 6 else 0
+		workingday = int(not holiday)
+		weather = lista[1]
+		weather_label = getWeatherLabel(weather)
+		norm_temp = round(normalize(float(lista[2]) - 273.15, minim = -8.0, maxim = 39.0), 4)
+		humidity = float(lista[3]) / 100
+		windspeed = float(lista[4]) * 3.6
+		norm_windspeed = round(windspeed / 67, 4)
+		# print (season, month, hour, weekday, holiday, workingday, weather_label, norm_temp, humidity, norm_windspeed)
+		return [season, month, hour, holiday, weekday, workingday, weather_label, norm_temp, humidity, norm_windspeed]
 
-timestamp = num(sys.argv[1])
-
-if isinstance(timestamp, int):
-	date = datetime.fromtimestamp(timestamp)
-	srt_datetime = date.strftime('%Y-%m-%d %H:%M:%S')
-	season = get_season(date)
-	month = date.strftime('%m')
-	hour = date.strftime('%H')
-	weekday = date.weekday() # 0 = monday, 6 = sunday
-	weekday = (weekday + 1) % 7 # weekday fix to 0 = sunday, 6 = saturday
-	holiday = 1 if weekday == 0 or weekday == 6 else 0
-	workingday = int(not holiday)
-	weather = sys.argv[2]
-	weather_label = getWeatherLabel(weather)
-	norm_temp = round(normalize(float(sys.argv[3]) - 273.15, minim = -8.0, maxim = 39.0), 4)
-	humidity = float(sys.argv[4]) / 100
-	windspeed = float(sys.argv[5]) * 3.6
-	norm_windspeed = round(windspeed / 67, 4)
-	# print (season, month, hour, weekday, holiday, workingday, weather_label, norm_temp, humidity, norm_windspeed)
-	scaler = joblib.load(scaler_filename)
-	X = scaler.transform(np.array([[season, month, hour, holiday, weekday, workingday, weather_label, norm_temp, humidity, norm_windspeed]])) #season, month, hour, holiday, weekday, workingday, weather_label, norm_temp, humidity, norm_windspeed
-	print(int(make_prediction(X)))
-else:
-	print("Error!")
+f = open(sys.argv[1], 'r')
+predictions = []
+for line in f:
+	line =  line.rstrip()
+	pcs = line.split(",")
+	row = convert(pcs)
+	if row is not None: predictions.append(row)
+#print(predictions)
+scaler = joblib.load(scaler_filename)
+X = scaler.transform(np.array(predictions)) #season, month, hour, holiday, weekday, workingday, weather_label, norm_temp, humidity, norm_windspeed
+res = make_prediction(X)
+for i in res:
+	print(int(i))
 sys.stdout.flush()
-
-

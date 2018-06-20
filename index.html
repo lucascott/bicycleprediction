@@ -83,21 +83,26 @@
 <script type="text/javascript">
 	var json, json2;
 	
-	$.getJSON('http://api.openweathermap.org/data/2.5/weather?id=4140963&appid=93c1b1cf935896c1d5551cc0ec9ff43a', function(data) {
+	$.getJSON('https://api.openweathermap.org/data/2.5/forecast?id=4140963&appid=93c1b1cf935896c1d5551cc0ec9ff43a', function(data) {
 		json = data
 		console.log(json)
-		$("#weather").text(json.weather[0].main);
-		$("#temperature").text((json.main.temp - 273).toFixed(1));
-		$("#humidity").text(json.main.humidity);
-		$("#windspeed").text((json.wind.speed*3.6).toFixed(1));
-		let url = "http://localhost:3000/predict?dt=" + json.dt + "&weather=" + json.weather[0].main + "&temp=" + json.main.temp + "&humidity=" + json.main.humidity + "&windspeed=" + json.wind.speed;
-		console.log(url);
-		console.log("python test.py " + json.dt + " " + json.weather[0].main + " " + json.main.temp + " " + json.main.humidity + " " + json.wind.speed)
-		$.getJSON(url, function(data) {
-			json2 = data;
-			console.log(json2.prediction);
-			$("#loader").hide();
-			$("#prediction").text(json2.prediction);
+		$("#weather").text(json.list[0].weather[0].main);
+		$("#temperature").text((json.list[0].main.temp - 273).toFixed(1));
+		$("#humidity").text(json.list[0].main.humidity);
+		$("#windspeed").text((json.list[0].wind.speed*3.6).toFixed(1));
+		
+		$.ajax({
+			type: "POST",
+			url: "http://localhost:3000/predict",
+			data: JSON.stringify(json),
+			dataType: "json",
+			contentType : "application/json",
+			success: function(data) {
+				console.log(data);
+				$("#loader").hide();
+				$("#prediction").text(data.prediction[0]);
+			}
+			
 		});
 	});
 	
