@@ -72,16 +72,22 @@
 				<h3 class="mt-5">The predicted number of bikes currently in use is:</h3>
 				<div id="loader" class="loader mt-3"></div>
 				<h1><span id="prediction"></span></h1>
+				<h3 id="chart-title" class="mt-5" style="display: none;">Predictions for the next 5 days:</h3>
+				<canvas id="line-chart" width="300" height="200"></canvas>
 			</main>
 		</div>
 	</div>
+	
+
+
 
 </div>
 
 <script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/Chart.min.js"></script>
 <script type="text/javascript">
-	var json, json2;
+	var json, predictions = [];
 	
 	$.getJSON('https://api.openweathermap.org/data/2.5/forecast?id=4140963&appid=93c1b1cf935896c1d5551cc0ec9ff43a', function(data) {
 		json = data
@@ -98,15 +104,51 @@
 			dataType: "json",
 			contentType : "application/json",
 			success: function(data) {
-				console.log(data);
+				predictions = data.pred
+				console.log(predictions);
 				$("#loader").hide();
-				$("#prediction").text(data.prediction[0]);
+				$("#prediction").text(predictions[0]);
+				$("#chart-title").fadeIn();
+				labels = []
+				for (i in json.list){
+					labels.push([json.list[i].dt_txt,"Weather: " + json.list[i].weather[0].main])
+				}
+				console.log(labels)
+				new Chart(document.getElementById("line-chart"), {
+				  type: 'line',
+				  data: {
+				    labels: labels,
+				    datasets: [{ 
+				        data: predictions,
+				        label: "Expected bicycles",
+				        borderColor: "#3e95cd",
+				        fill: true
+				      }
+				    ]
+				  },
+				  options: {
+				    title: {
+				      display: false,
+				      text: 'Predictions for the next 5 days'
+				    }
+				  }
+				});
+
+
 			}
 			
 		});
 	});
 	
 		//http://api.openweathermap.org/data/2.5/weather?id=4140963&appid=93c1b1cf935896c1d5551cc0ec9ff43a
+		
+
+
 	</script>
+
+	
+	
+</script>
+
 </body>
 </html>

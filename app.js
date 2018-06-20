@@ -45,10 +45,11 @@ function predict (request, response) {
 		if (err) throw err;
 		//res is an array consisting of messages collected during execution
 		for (var i = res.length - 1; i >= 0; i--) {
-			res[i] = res[i].replace('\r','');
+			//res[i] = res[i].replace('\r','');
+			res[i] = parseInt(res[i]);
 		}
 		console.log(res);
-		response.json({"prediction" : res});
+		response.json({"pred" : res});
   	});
 }
 
