@@ -52,11 +52,10 @@ df.values.astype('float32')
 
 # normalize features
 df.interpolate(inplace=True) # rimuovo i valori NaN altrimenti non posso normalizzare
-scaler = MinMaxScaler(feature_range=(-1, 1))
-scaled = scaler.fit_transform(df.values[:,: -len(cols_at_end)])
+scaler = joblib.load(scaler_filename)
+scaled = scaler.transform(df.values[:,: -len(cols_at_end)])
 scaled = pd.DataFrame(scaled)
 scaled = pd.concat((scaled, df[cols_at_end]), axis=1)
-joblib.dump(scaler, scaler_filename) # exporting the scaler
 print(scaled.head())
 
 # shuffle the dataset
@@ -72,48 +71,6 @@ train_X, train_y = train[:, :-1], train[:, -1]
 test_X, test_y = test[:, :-1], test[:, -1]
 # reshape input to be 3D [samples, timesteps, features]
 print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
-
-
-# design network
-model = Sequential()
-model.add(Dense(64, input_dim=train_X.shape[1], activation = "relu"))
-model.add(Dense(128, activation = "relu"))
-model.add(Dense(128, activation = "relu"))
-model.add(Dense(128, activation = "relu"))
-model.add(Dense(128, activation = "relu"))
-model.add(Dense(64, activation = "relu"))
-model.add(Dense(32, activation = "relu"))
-model.add(Dense(16, activation = "relu"))
-
-#model.add(Dense(units=120, activation = "relu"))
-#model.add(Dense(units=60, activation = "relu"))
-
-model.add(Dense(units=1, activation="linear"))
-
-opt = RMSprop()
-model.compile(loss='mean_squared_error', optimizer=opt, metrics=['accuracy'])
-# fit network
-history = model.fit(train_X, train_y, epochs=epochs, batch_size=64, validation_data=(test_X, test_y), verbose=2, shuffle=True)
-# plot history
-pyplot.subplot(2,1,1)
-pyplot.plot(history.history['loss'], label='loss')
-pyplot.plot(history.history['val_loss'], label='val_loss')
-pyplot.legend()
-
-pyplot.subplot(2,1,2)
-pyplot.plot(history.history['acc'], label='accuracy')
-pyplot.legend()
-pyplot.show()
-
-
-# serialize model to JSON
-model_json = model.to_json()
-with open("model.json", "w") as json_file:
-    json_file.write(model_json)
-# serialize weights to HDF5
-model.save_weights("model.h5")
-print("Saved model to disk")
-
 
 
 # load json and create model

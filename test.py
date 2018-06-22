@@ -45,7 +45,7 @@ def normalize(val, minim, maxim):
 
 def getWeatherLabel(weather):
 	weather = weather.lower()
-	if "heavy" in weather or "snow" in weather or "ice" in weather:
+	if "heavy" in weather or "snow" in weather or "ice" in weather or "extreme" in weather:
 		return 4
 	elif "rain" in weather or "light" in weather:
 		return 3

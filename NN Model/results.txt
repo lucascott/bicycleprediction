@@ -1,0 +1,15 @@
+REPtree:
+Mean absolute error                     57.6442
+Root mean squared error                 86.9335
+
+M5 tree model
+Mean absolute error                     47.5822
+Root mean squared error                 71.755
+
+M5 Rules
+Mean absolute error                     49.7793
+Root mean squared error                 74.9719
+
+NN
+Test absolute error: 					43.340
+Test RMSE: 								70.473
